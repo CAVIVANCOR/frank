@@ -1,3 +1,8 @@
+# Ignorar la carpeta node_modules generada por npm
+node_modules/
+
+# Ignorar el archivo .env que podría contener configuraciones sensibles
+.env
 # Logs
 logs
 *.log
@@ -6,7 +11,6 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
-*.env
 node_modules
 dist
 dist-ssr
