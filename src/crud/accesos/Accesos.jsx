@@ -22,10 +22,10 @@ export default function Accesos() {
     let emptyRegistro = {
         id: null, // Identificador temporal único
         lectura: false,
-        escritura: '',
-        creacion: '',
-        eliminacion: '',
-        reportes: '',
+        escritura: false,
+        creacion: false,
+        eliminacion: false,
+        reportes: false,
         UsuarioId: null
     };
     const [dataRegistroState, setDataRegistroState] = useState(emptyRegistro);
@@ -76,6 +76,7 @@ export default function Accesos() {
 
     const saveRegistro = async () => {
         setSubmitted(true);
+        console.log('saveRegistro', dataRegistroState);
         if (dataRegistroState.UsuarioId>0) {
             let _dataListRegistros = [...dataListRegistroState];
             let _dataRegistro = { ...dataRegistroState };
@@ -104,6 +105,7 @@ export default function Accesos() {
             setDataListRegistroState(_dataListRegistros);
             setFichaRegistroDialog(false);
             setDataRegistroState(emptyRegistro);
+            cargarAccesos();
         }
     };
     const editRegistro = (fichaData) => {
@@ -192,9 +194,10 @@ export default function Accesos() {
         );
     };
     const imageBodyTemplate = (rowData) => {
-        const uniqueQuery = `?random=${Math.random()}`; // Generate a unique query parameter
-        const imageUrl = `${urlBackEndData}/media/usuarios/${rowData.Usuario.urlFoto}${uniqueQuery}`;
-        return <img key={Math.random()} src={imageUrl} alt={rowData.Usuario.urlFoto} className="shadow-2 border-round" style={{ width: '64px' }} />;
+        if (!rowData.Usuario) return null; // Manejo de error si Usuario es null o indefinido
+        const imageUrl = `${urlBackEndData}/media/usuarios/${rowData.Usuario.urlFoto}`;
+        console.log('imageUrl', imageUrl,rowData.Usuario);
+        return <img key={rowData.id} src={imageUrl} alt={rowData.Usuario.urlFoto} className="shadow-2 border-round" style={{ width: '64px' }} />;
     };
     const actionBodyTemplate = (rowData) => {
         return (

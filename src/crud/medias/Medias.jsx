@@ -51,11 +51,11 @@ export default function Medias() {
             let response = await ( await axios.get(`${urlBackEndData}/medias/?isAdministrator=true`)).data;
             let responseUsuarios = await (await axios.get(`${urlBackEndData}/usuarios/`)).data;
             let responseCategorias = await (await axios.get(`${urlBackEndData}/categories/`)).data;
+            setUsuarios(responseUsuarios.data);
+            setCategorias(responseCategorias.data);
+            console.log('cargarMedias: response.data', responseUsuarios.data, responseCategorias.data, response.data);
             if (response.data.length > 0) {
-                console.log('cargarMedias: response.data', responseUsuarios.data, responseCategorias.data, response.data);
                 setDataListRegistroState(response.data);
-                setUsuarios(responseUsuarios.data);
-                setCategorias(responseCategorias.data);
             }
         } catch (error) {
             console.log('error cargarUsuarios', error);
@@ -87,8 +87,11 @@ export default function Medias() {
 
     const saveRegistro = async () => {
         setSubmitted(true);
+        let _dataListRegistros = [];
         if (dataRegistroState.url!=='') {
-            let _dataListRegistros = [...dataListRegistroState];
+            if (dataListRegistroState){
+                _dataListRegistros = [...dataListRegistroState];
+            }
             let _dataRegistro = { ...dataRegistroState };
             if (dataRegistroState.id) {
                 try {
@@ -107,7 +110,7 @@ export default function Medias() {
                     setDataRegistroState(_dataRegistro);
                     const response = await axios.post(`${urlBackEndData}/medias/`, _dataRegistro);
                     if (response.data) {
-                        _dataListRegistros.push(_dataRegistro);
+                        _dataListRegistros.push(response.data);
                         toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Media Created', life: 3000 });
                     }
                 } catch (error) {
@@ -117,6 +120,7 @@ export default function Medias() {
             setDataListRegistroState(_dataListRegistros);
             setFichaRegistroDialog(false);
             setDataRegistroState(emptyRegistro);
+            cargarMedias();
         }
     };
     const editRegistro = (fichaData) => {
@@ -214,24 +218,30 @@ export default function Medias() {
         );
     };
     const imageBodyTemplate = (rowData) => {
+        if (!rowData.url) return null; // Si no hay URL, no mostrar nada
         if (rowData.mediaType === 'VIDEO') {
-            const videoUrl = `${urlBackEndData}/media/videos/${rowData.url}`;
-            return <video src={videoUrl} alt={rowData.url} className="shadow-2 border-round" style={{ width: '128px' }} />;
-        }else {
+            const videoId = rowData.url.split('be/')[1];
+            const videoUrl = `https://www.youtube.com/embed/${videoId}`;
+            return <iframe src={videoUrl} title={rowData.url} width="128" height="72" frameBorder="0" allowFullScreen className="shadow-2 border-round" />;
+         }else {
             const imageUrl = `${urlBackEndData}/media/fotos/${rowData.url}`;
             return <img src={imageUrl} alt={rowData.url} className="shadow-2 border-round" style={{ width: '128px' }} />;
         }
     };
     const creadorBodyTemplate = (rowData) => {
+        if (!rowData.UsuarioId) return null; // Si no hay URL, no mostrar nada
         return usuarios[rowData.UsuarioId].usuario;
     };
     const idBodyTemplate = (rowData) => {
+        if (!rowData) return null; // Si no hay URL, no mostrar nada
         return rowData.id;
     };
     const categoriaBodyTemplate = (rowData) => {
+        if (!rowData.CategoryId) return null; // Si no hay URL, no mostrar nada
         return <Tag value={categorias.find(cat => parseInt(cat.id) === parseInt(rowData.CategoryId)).descripcion} severity={getSeverity(parseInt(rowData.CategoryId))}></Tag>;
     };
     const mediaTypeBodyTemplate = (rowData) => {
+        if (!rowData.mediaType) return null; // Si no hay URL, no mostrar nada
         let style;
         if (rowData.mediaType === 'FOTO') {
             style = { backgroundColor: '#f5c9c9', color : '#373733' }; // Estilo rosado claro
@@ -370,19 +380,21 @@ export default function Medias() {
             <Dialog visible={fichaRegistroDialog} style={{ width: '32rem' }} breakpoints={{ '960px': '75vw', '641px': '90vw' }} header="Ficha Media" modal className="p-fluid" footer={fichaDialogFooter} onHide={hideDialog}>
                 {dataRegistroState.url !== '' && 
                     (dataRegistroState.mediaType === 'VIDEO' 
-                        ? <video 
-                            src={`${urlBackEndData}/media/videos/${dataRegistroState.url}`} 
-                            alt={dataRegistroState.url} 
-                            width='300' 
-                            controls 
-                            style={{ 
-                                display: 'block', 
-                                marginLeft: 'auto', 
-                                marginRight: 'auto', 
-                                borderRadius: '10px', 
-                                boxShadow: '0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23)' 
-                            }} 
-                        /> 
+                        ? <iframe
+                        src={`https://www.youtube.com/embed/${dataRegistroState.url.split('be/')[1]}`}
+                        title={dataRegistroState.url}
+                        width="300"
+                        height="169"
+                        frameBorder="0"
+                        allowFullScreen
+                        style={{
+                          display: 'block',
+                          marginLeft: 'auto',
+                          marginRight: 'auto',
+                          borderRadius: '10px',
+                          boxShadow: '0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23)'
+                        }}
+                      />
                         : <img 
                             src={`${urlBackEndData}/media/fotos/${dataRegistroState.url}`} 
                             alt={dataRegistroState.url} 
@@ -416,9 +428,9 @@ export default function Medias() {
                 </div>
                 <div className="field">
                     <label htmlFor="url" className="font-bold">Url</label>
-                    <InputText id="url" value={dataRegistroState.url} disabled  />
+                    <InputText id="url" value={dataRegistroState.url} onChange={(e) => onInputChange(e.target.value, 'url')} required autoFocus className={classNames({ 'p-invalid': submitted && !dataRegistroState.url })} />
                     {submitted && !dataRegistroState.url && <small className="p-error">Url es requerido.</small>}
-                    <FileUpload mode="basic" name="demo[]"  accept="image/*,video/mp4" customUpload={true} onSelect={(e) => customBase64Uploader(e, dataRegistroState.id)} uploadHandler={(e) => customBase64Uploader(e,dataRegistroState.id)} />
+                    {/* <FileUpload mode="basic" name="demo[]"  accept="image/*,video/mp4" customUpload={true} onSelect={(e) => customBase64Uploader(e, dataRegistroState.id)} uploadHandler={(e) => customBase64Uploader(e,dataRegistroState.id)} /> */}
                 </div>
             </Dialog>
             <Dialog visible={deleteRegistroDialog} style={{ width: '32rem' }} breakpoints={{ '960px': '75vw', '641px': '90vw' }} header="Confirm" modal footer={deleteFichaDialogFooter} onHide={hideDeleteRegistroDialog}>
@@ -426,7 +438,7 @@ export default function Medias() {
                     <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: '2rem' }} />
                     {dataRegistroState && (
                         <span>
-                            Esta seguro de Borrar el Usuario <b>{dataRegistroState.nombres}</b>?
+                            Esta seguro de Borrar La Media <b>{dataRegistroState.nombres}</b>?
                         </span>
                     )}
                 </div>
@@ -434,7 +446,7 @@ export default function Medias() {
             <Dialog visible={deleteRegistrosDialog} style={{ width: '32rem' }} breakpoints={{ '960px': '75vw', '641px': '90vw' }} header="Confirm" modal footer={deleteListaDialogFooter} onHide={hideDeleteRegistrosDialog}>
                 <div className="confirmation-content">
                     <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: '2rem' }} />
-                    {dataRegistroState && <span>Esta Seguro de Eliminar los usuarios Seleccionados?</span>}
+                    {dataRegistroState && <span>Esta Seguro de Eliminar las medias Seleccionadas?</span>}
                 </div>
             </Dialog>
         </div>

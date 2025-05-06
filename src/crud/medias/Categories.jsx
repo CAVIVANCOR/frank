@@ -64,8 +64,12 @@ export default function Categories() {
 
     const saveRegistro = async () => {
         setSubmitted(true);
+        let _dataListRegistros = [];
+        console.log('saveRegistro Categoria', dataRegistroState, 'lista',dataListRegistroState);
         if (dataRegistroState.descripcion !== '') {
-            let _dataListRegistros = [...dataListRegistroState];
+            if (dataListRegistroState){
+                _dataListRegistros = [...dataListRegistroState];
+            }
             let _dataRegistro = { ...dataRegistroState };
             if (dataRegistroState.id) {
                 try {
@@ -82,7 +86,7 @@ export default function Categories() {
                 try {
                     const response = await axios.post(`${urlBackEndData}/categories/`, _dataRegistro);
                     if (response.data) {
-                        _dataListRegistros.push(_dataRegistro);
+                        _dataListRegistros.push(response.data);
                         toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Access Created', life: 3000 });
                     }
                 } catch (error) {
@@ -92,6 +96,7 @@ export default function Categories() {
             setDataListRegistroState(_dataListRegistros);
             setFichaRegistroDialog(false);
             setDataRegistroState(emptyRegistro);
+            cargarCategorias();
         }
     };
     const editRegistro = (fichaData) => {
@@ -242,9 +247,9 @@ export default function Categories() {
                     <Column field="descripcion" header="Descripcion" sortable style={{ minWidth: '8rem' }}></Column>
                 </DataTable>
             </div>
-            <Dialog visible={fichaRegistroDialog} style={{ width: '32rem' }} breakpoints={{ '960px': '75vw', '641px': '90vw' }} header="Ficha Acceso" modal className="p-fluid" footer={fichaDialogFooter} onHide={hideDialog}>
+            <Dialog visible={fichaRegistroDialog} style={{ width: '32rem' }} breakpoints={{ '960px': '75vw', '641px': '90vw' }} header="Ficha Categoria" modal className="p-fluid" footer={fichaDialogFooter} onHide={hideDialog}>
                 <div className="field" style={{ display: 'flex', alignItems: 'center' }}>
-                    <label htmlFor="lectura" className="font-bold" style={{ width: '100px', marginRight: '1.5em' }}>Lectura</label>
+                    <label htmlFor="Descripcion" className="font-bold" style={{ width: '100px', marginRight: '1.5em' }}>Descriopción</label>
                     <InputText id="descripcion" value={dataRegistroState.descripcion} onChange={(e) => onInputChange(e.target.value, 'descripcion')} required autoFocus className={classNames({ 'p-invalid': submitted && !dataRegistroState.descripcion })} />
                     {submitted && !dataRegistroState.descripcion && <small className="p-error">Descripcion es requerido.</small>}
                 </div>

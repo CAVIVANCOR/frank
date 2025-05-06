@@ -42,6 +42,7 @@ export default function Usuarios() {
         try {
             let response = await ( await axios.get(`${urlBackEndData}/usuarios/?isAdministrator=true`)).data;
             let responseRoles = await (await axios.get(`${urlBackEndData}/roles/`)).data;
+            console.log('responseRoles', responseRoles.data);
             if (response.data.length > 0) {
                 setDataListRegistroState(response.data);
                 setRoles(responseRoles.data);
@@ -298,7 +299,6 @@ export default function Usuarios() {
                     <Column field="borradoLogico" header="Estado" dataType="boolean" bodyClassName="text-center" style={{ minWidth: '4rem' }} body={verifiedBodyTemplate} sortable />
                     <Column field="url" header="Image" body={imageBodyTemplate}></Column>
                     <Column field="usuario" header="Usuario" sortable style={{ minWidth: '8rem' }}></Column>
-                    <Column field="password" header="Password" sortable style={{ minWidth: '8rem' }}></Column>
                     <Column field="nombres" header="Nombres" sortable style={{ minWidth: '10rem' }}></Column>
                     <Column field="email" header="Email" sortable style={{ minWidth: '8rem' }}></Column>
                 </DataTable>
