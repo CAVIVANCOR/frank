@@ -223,7 +223,14 @@ export default function Medias() {
         if (rowData.mediaType === 'VIDEO') {
             const videoId = rowData.url.split('be/')[1];
             const videoUrl = `https://www.youtube.com/embed/${videoId}`;
-            return <iframe src={videoUrl} title={rowData.url} width="128" height="72" frameBorder="0" allowFullScreen className="shadow-2 border-round" />;
+            return <iframe src={videoUrl} title={rowData.url} width="160" height="120" frameBorder="0" allowFullScreen 
+            style={{
+              display: 'block',
+              marginLeft: 'auto',
+              marginRight: 'auto',
+              borderRadius: '10px',
+              boxShadow: '0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23)'
+            }} />;
          }else {
             const imageUrl = `${urlBackEndData}/media/fotos/${rowData.url}`;
             return <img src={imageUrl} alt={rowData.url} className="shadow-2 border-round" style={{ width: '128px' }} />;
