@@ -237,6 +237,7 @@ export default function Medias() {
         }
     };
     const creadorBodyTemplate = (rowData) => {
+        console.log('creadorBodyTemplate rowData', rowData,"usuarios",usuarios,"usuario",usuarios[rowData.UsuarioId].usuario);
         if (!rowData.UsuarioId) return null; // Si no hay URL, no mostrar nada
         return usuarios[rowData.UsuarioId].usuario;
     };
