@@ -108,6 +108,8 @@ export default function Media() {
         };
     }, []);
     const gridItem = (product) => {
+        const videoId = product.url.split('be/')[1];
+        const videoUrl = `https://www.youtube.com/embed/${videoId}`;
         return (
           <div className={`${columnWidth} p-1`} key={product.id} style={{ display: 'flex', marginBottom: '1rem' }}>
             <div className="p-4 border-1 surface-border surface-card border-round" style={{ display: 'flex', flexDirection: 'column', flex: '1' }}>
@@ -121,7 +123,15 @@ export default function Media() {
               <div className="flex flex-column align-items-center gap-3 py-5">
                 {product.mediaType === 'FOTO' 
                   ? (<Image src={`${urlBackEndData}/media/fotos/${product.url}`} alt={product.title} width='250' preview imageStyle={{borderRadius: '10px', boxShadow: '0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23)'}} />) 
-                  : (<video src={`${urlBackEndData}/media/videos/${product.url}`} alt={product.title} width='220' controls style={{borderRadius: '10px', boxShadow: '0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23)'}}></video>)}
+                  : (<iframe src={videoUrl} title={product.url} width="250" height="190" frameBorder="0" allowFullScreen 
+                        style={{
+                          display: 'block',
+                          marginLeft: 'auto',
+                          marginRight: 'auto',
+                          borderRadius: '10px',
+                          boxShadow: '0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23)'
+                        }}
+                  ></iframe>)}
               </div>
               <div style={{ flexGrow: 0, flexShrink: 0, alignSelf: 'center' }}>
                 <div className="text-2xl font-bold">{product.title}</div>
@@ -131,6 +141,8 @@ export default function Media() {
           </div>
         );
       };
+
+
 
     const itemTemplate = (product) => {
         if (!product) {

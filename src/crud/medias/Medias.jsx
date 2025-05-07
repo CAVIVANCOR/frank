@@ -53,11 +53,12 @@ export default function Medias() {
             let responseCategorias = await (await axios.get(`${urlBackEndData}/categories/`)).data;
             setUsuarios(responseUsuarios.data);
             setCategorias(responseCategorias.data);
-            console.log('cargarMedias: response.data', responseUsuarios.data, responseCategorias.data, response.data);
+            console.log('cargarMedias: OK response.data', responseUsuarios.data, responseCategorias.data, response.data);
             if (response.data.length > 0) {
                 setDataListRegistroState(response.data);
             }
         } catch (error) {
+            console.log('cargarMedias: Error', responseUsuarios.data, responseCategorias.data, response.data);
             console.log('error cargarUsuarios', error);
         }
     };
