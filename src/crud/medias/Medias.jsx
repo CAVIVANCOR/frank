@@ -382,7 +382,7 @@ export default function Medias() {
                     <Column field="title" header="Title" sortable style={{ minWidth: '4rem' }}></Column>
                     <Column field="mediaType" header="Tipo" body={mediaTypeBodyTemplate} sortable style={{ minWidth: '1rem' }}></Column>
                     <Column field="url" header="Foto/Video" body={imageBodyTemplate}></Column>
-                    <Column field="UsuarioId" header="Creador" body={creadorBodyTemplate} sortable style={{ minWidth: '2rem' }}></Column>
+                    {/* <Column field="UsuarioId" header="Creador" body={creadorBodyTemplate} sortable style={{ minWidth: '2rem' }}></Column> */}
                 </DataTable>
             </div>
             <Dialog visible={fichaRegistroDialog} style={{ width: '32rem' }} breakpoints={{ '960px': '75vw', '641px': '90vw' }} header="Ficha Media" modal className="p-fluid" footer={fichaDialogFooter} onHide={hideDialog}>
