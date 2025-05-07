@@ -10,7 +10,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="cuerpoConImagenFondo" style={{ backgroundImage: `url(${apiUrl}/media/fotos/arboldelavida.png)` }}>
+    <div className="cuerpoConImagenFondo" style={{ backgroundImage: `url(${apiUrl}/media/fotos/arboldelavida.webp)` }}>
       <h1>
         <div>Frank Barmak Raich</div>
         <div>My Life</div>
